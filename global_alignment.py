@@ -62,8 +62,10 @@ def get_alignment(g, seq1, seq2):
     scores = [0, 0, 0] # Initialize an array to hold the computed scores while backtracking
 
     # Initialize the aligned sequences with the last nucleotide in the alignment
-    aligned_seq1 = [seq1[-1]]
-    aligned_seq2 = [seq2[-1]]
+    # aligned_seq1 = [seq1[-1]]
+    # aligned_seq2 = [seq2[-1]]
+    aligned_seq1 = []
+    aligned_seq2 = []
 
     # Set up counters for the indexes
     i = len(seq2)-1
@@ -71,28 +73,45 @@ def get_alignment(g, seq1, seq2):
     
     path.append(g[i][j]) # Append the final score to the path
     
-    while (i > 0 and j > 0):
+    while (i > 0 or j > 0):
         scores[0] = g[i][j-1] # Backtracked score from the same row
         scores[1] = g[i-1][j] # Backtracked score from the same column
         scores[2] = g[i-1][j-1] # Backtracked score from the diagonal
-        
-        path.append(max(scores))    # Append the max score to the path
-        
-        # Check to see which backtracked score was used and then append the associated nucleotide or gap to the aligned sequences
-        if np.argmax(scores) == 0:
-            aligned_seq1.append(seq1[i])
-            aligned_seq2.append('-')
+        if (seq2[i] == seq1[j]):
+            path.append(scores[2])
+            if (i != 0 and j != 0):
+                aligned_seq1.append(seq1[j])
+                aligned_seq2.append(seq2[i])
+            i -= 1
             j -= 1
-        elif np.argmax(scores) == 1:
-            aligned_seq1.append('-')
-            aligned_seq2.append(seq2[j])
-            i -= 1
-        elif np.argmax(scores) == 2:
-            if (i != 1 and j != 1):
-                aligned_seq1.append(seq1[j-1])
-                aligned_seq2.append(seq2[i-1])
-            i -= 1
-            j -= 1    
+        else:
+            path.append(max(scores))    # Append the max score to the path
+        
+            # Check to see which backtracked score was used and then append the associated nucleotide or gap to the aligned sequences
+            if np.argmax(scores) == 0:
+                if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
+                    aligned_seq1.append(seq1[i])
+                    aligned_seq2.append('-')
+                    j -= 1
+                else:
+                    aligned_seq1.append(seq1[i+1])
+                    aligned_seq2.append('-')
+                    j -= 1
+            elif np.argmax(scores) == 1:
+                if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
+                    aligned_seq1.append('-')
+                    aligned_seq2.append(seq2[j])
+                    i -= 1
+                else:
+                    aligned_seq1.append('-')
+                    aligned_seq2.append(seq2[j+1])
+                    i -= 1
+            elif np.argmax(scores) == 2:
+                if (i != 1 and j != 1):
+                    aligned_seq1.append(seq1[j-1])
+                    aligned_seq2.append(seq2[i-1])
+                i -= 1
+                j -= 1    
 
     # Reverse the path and aligned sequences to start from the beginning
     path.reverse()
@@ -106,12 +125,15 @@ Outputs the global alignment and its details.
 Input:
 g: mxn matrix which holds all the computed values of the optimal global alignment
 path: The optimal global alignment path (max values at each step)
+seq1: sequence 1
+seq2: sequence 2
 aligned_seq1: The aligned version of sequence 1 (adjusting for gaps)
 aligned_seq2: The aligned version of sequence 2 (adjusting for gaps)
 '''
-def print_alignment(g, path, aligned_seq1, aligned_seq2):
+def print_alignment(g, path, seq1, seq2, aligned_seq1, aligned_seq2):
     # Print the global alignment matrix
-    print('Global Alignment Matrix:\n', g)
+    print('Global Alignment Matrix:\n')
+    print_matrix(g, seq1, seq2)
     print()
 
     # Print the optimal path (scores)
@@ -142,11 +164,29 @@ def print_alignment(g, path, aligned_seq1, aligned_seq2):
         print(n, end=' ')
     print()
 
+def print_matrix(g, seq1, seq2):
+    print('  |', end='')
+    for n in seq1:
+        print(' {} |'.format(n), end='')
+    print()
+    print('--' + '+---' * (g.shape[0]) + '+')
+    for i in range(g.shape[1]):
+        print(seq2[i] + ' ', end='')
+        for n in g[i]:
+            if n > 9 or n < -9:
+                print('|{}'.format(n), end='')
+            elif n < 0:
+                print('|{} '.format(n), end='')
+            else:
+                print('| {} '.format(n), end='')
+        print('|', end='')
+        print('\n--' + '+---' * (g.shape[0]) + '+')
+
 if __name__ == '__main__':
 
     #Initialize the sequences and scoring weights (will be changed for user input later)
-    seq1 = ['-', 'G', 'A', 'C', 'A']
-    seq2 = ['-', 'A', 'C', 'A']
+    seq1 = ['-', 'A', 'A', 'T', 'C', 'G']
+    seq2 = ['-', 'A', 'A', 'C', 'G', 'C']
     match = 2
     mismatch = -1
     gap = -2
@@ -158,4 +198,4 @@ if __name__ == '__main__':
     path, aligned_seq1, aligned_seq2 = get_alignment(g, seq1, seq2)
 
     # Print the global alignment and its relevant information
-    print_alignment(g, path, aligned_seq1, aligned_seq2)
+    print_alignment(g, path, seq1, seq2, aligned_seq1, aligned_seq2)
