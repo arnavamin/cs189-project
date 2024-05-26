@@ -147,6 +147,7 @@ def get_alignment(l, original_seq1, original_seq2):
     return output_path, output_align1, output_align2
 
 def print_alignment(l, output_path, output_align1, output_align2, original_seq1, original_seq2):
+    print()
     print('Local Alignment Matrix:\n')
     print_matrix(l, original_seq1, original_seq2)
     print()
