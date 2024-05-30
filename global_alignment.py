@@ -94,7 +94,7 @@ def get_alignment(g, seq1, seq2):
                     aligned_seq2.append('-')
                     j -= 1
                 else:
-                    aligned_seq1.append(seq1[i+1])
+                    aligned_seq1.append(seq1[j])
                     aligned_seq2.append('-')
                     j -= 1
             elif np.argmax(scores) == 1:
@@ -104,12 +104,12 @@ def get_alignment(g, seq1, seq2):
                     i -= 1
                 else:
                     aligned_seq1.append('-')
-                    aligned_seq2.append(seq2[j+1])
+                    aligned_seq2.append(seq2[i])
                     i -= 1
             elif np.argmax(scores) == 2:
                 if (i != 1 and j != 1):
-                    aligned_seq1.append(seq1[j-1])
-                    aligned_seq2.append(seq2[i-1])
+                    aligned_seq1.append(seq1[j])
+                    aligned_seq2.append(seq2[i])
                 i -= 1
                 j -= 1    
 
@@ -182,11 +182,29 @@ def print_matrix(g, seq1, seq2):
         print('|', end='')
         print('\n--' + '+---' * (g.shape[0]) + '+')
 
+'''
+Format the input sequence from a string to a list with padding.
+
+Input:
+seq: String sequence input.
+
+Output:
+formatted_seq: The formatted sequence list.
+'''
+def format_sequence(seq):
+    formatted_seq = list(seq)
+    formatted_seq.insert(0, '-')
+    return formatted_seq
+
 if __name__ == '__main__':
 
     #Initialize the sequences and scoring weights (will be changed for user input later)
-    seq1 = ['-', 'A', 'A', 'T', 'C', 'G']
-    seq2 = ['-', 'A', 'A', 'C', 'G', 'C']
+    seq1 = 'GATTACATATACG'
+    seq2 = 'GTCGACGCTACGT'
+
+    seq1 = format_sequence(seq1)
+    seq2 = format_sequence(seq2)
+
     match = 2
     mismatch = -1
     gap = -2
