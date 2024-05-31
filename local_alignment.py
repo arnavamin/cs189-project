@@ -116,7 +116,7 @@ def get_alignment(l, original_seq1, original_seq2):
                         aligned_seq2.append('-')
                         y -= 1
                     else:
-                        aligned_seq1.append(seq1[x+1])
+                        aligned_seq1.append(seq1[x])
                         aligned_seq2.append('-')
                         y -= 1
                 elif np.argmax(scores) == 1:
@@ -126,12 +126,12 @@ def get_alignment(l, original_seq1, original_seq2):
                         x -= 1
                     else:
                         aligned_seq1.append('-')
-                        aligned_seq2.append(seq2[y+1])
+                        aligned_seq2.append(seq2[y])
                         x -= 1
                 elif np.argmax(scores) == 2:
                     if (x != 1 and y != 1):
-                        aligned_seq1.append(seq1[y-1])
-                        aligned_seq2.append(seq2[x-1])
+                        aligned_seq1.append(seq1[y])
+                        aligned_seq2.append(seq2[x])
                     x -= 1
                     y -= 1   
 
