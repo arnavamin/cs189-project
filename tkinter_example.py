@@ -6,52 +6,69 @@ import global_alignment as ga
 
 # Function to display the alignment score matrix
 def show_alignment():
-    seq1_original = 'GATTACATATACG'
-    seq2_original = 'GTCGACGCTACGT'
-
-    seq1 = ga.format_sequence(seq1_original)
-    seq2 = ga.format_sequence(seq2_original)
-
-    match = 2
-    mismatch = -1
-    gap = -2
+    seq1 = ga.format_sequence(entry_seq1.get())
+    seq2 = ga.format_sequence(entry_seq2.get())
+    match = int(entry_match.get())
+    mismatch = int(entry_mismatch.get())
+    gap = int(entry_gap.get())
+    
+    # For testing purposes
+    # seq1 = ga.format_sequence('GATTACATATACG')
+    # seq2 = ga.format_sequence('GTCGACGCTACGT')
+    # match = 2
+    # mismatch = -1
+    # gap = -2
 
     matrix = ga.compute_alignment(seq1, seq2, match, mismatch, gap)
+    path, indices, aligned_seq1, aligned_seq2 = ga.get_alignment(matrix, seq1, seq2)
 
     # Clear previous content in result_frame
     for widget in result_frame.winfo_children():
         widget.destroy()
 
-    # Create Treeview to display matrix
-    tree = ttk.Treeview(result_frame, show='headings')
-    tree.grid(row=0, column=0, sticky='nsew')
+    # Create labels for column headers (seq1 characters)
+    for j, char in enumerate(seq1):
+        label = ttk.Label(result_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+        label.grid(row=0, column=j+1, sticky='nsew')
 
-    # # Configure Treeview columns
-    # print(len(seq1), len(matrix))
-    print(seq1)
-    tree['columns'] = seq1
-    for col in tree['columns']:
-        tree.heading(col, text=col)
-        tree.column(col, width=40, anchor='center')
-    # for i, col in enumerate(matrix[0]):
-    #     col_label = '-' if i == 0 else seq1_original[i-1]
-    #     tree.insert('', 'end', values=[col_label])
+    # Create labels for row headers (seq2 characters)
+    for i, char in enumerate(seq2):
+        label = ttk.Label(result_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+        label.grid(row=i+1, column=0, sticky='nsew')
 
-    # Add rows to Treeview
-    for i, row in enumerate(matrix):
-        row_label = '-' if i == 0 else seq2_original[i-1]
-        tree.insert('', 'end', values=[row_label] + [int(val) for val in row])
+    # Create labels for the matrix values
+    temp_label = tk.Label(result_frame)
+    default_bg = temp_label.cget("bg")
+    temp_label.destroy()
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            bg = 'blue' if (i, j) in indices else default_bg
+            label = tk.Label(result_frame, text=str(int(matrix[i][j])), borderwidth=1, relief="solid", width=5, anchor='center', bg=bg)
+            label.grid(row=i+1, column=j+1, sticky='nsew')
 
     # Configure frame to expand with window
-    result_frame.rowconfigure(0, weight=1)
-    result_frame.columnconfigure(0, weight=1)
+    for i in range(len(matrix) + 1):
+        result_frame.rowconfigure(i, weight=1)
+    for j in range(len(matrix[0]) + 1):
+        result_frame.columnconfigure(j, weight=1)
 
-    # Add horizontal and vertical scrollbars
-    x_scroll = ttk.Scrollbar(result_frame, orient='horizontal', command=tree.xview)
-    y_scroll = ttk.Scrollbar(result_frame, orient='vertical', command=tree.yview)
-    tree.configure(xscrollcommand=x_scroll.set, yscrollcommand=y_scroll.set)
-    x_scroll.grid(row=1, column=0, sticky='ew')
-    y_scroll.grid(row=0, column=1, sticky='ns')
+    
+
+    ttk.Label(root, text="Aligned Sequences:").grid(row=7, column=0, padx=10, pady=10, sticky='e')
+    aligned_frame = ttk.Frame(root)
+    aligned_frame.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
+    # Clear previous content in aligned_frame
+    for widget in aligned_frame.winfo_children():
+        widget.destroy()
+    
+    for j, char in enumerate(aligned_seq1):
+        label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+        label.grid(row=0, column=j+1, sticky='nsew')
+    
+    for j, char in enumerate(aligned_seq2):
+        label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+        label.grid(row=1, column=j+1, sticky='nsew')
+        
 
 # Create the main window
 root = tk.Tk()
