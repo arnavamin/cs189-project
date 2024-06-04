@@ -116,7 +116,7 @@ def get_alignment(l, original_seq1, original_seq2):
                         aligned_seq2.append('-')
                         y -= 1
                     else:
-                        aligned_seq1.append(seq1[x])
+                        aligned_seq1.append(seq1[x+1])
                         aligned_seq2.append('-')
                         y -= 1
                 elif np.argmax(scores) == 1:
@@ -189,8 +189,8 @@ def print_alignment(l, output_path, output_align1, output_align2, original_seq1,
 
 if __name__ == '__main__':
 
-    original_seq1 = 'AATCG'
-    original_seq2 = "AACGC"
+    original_seq1 = 'GATTACATATACG'
+    original_seq2 = "GTCGACGCTACGT"
 
     match = 1
     mismatch = -1
@@ -201,4 +201,3 @@ if __name__ == '__main__':
     output_path, output_align1, output_align2 = get_alignment(l, original_seq1, original_seq2)
 
     print_alignment(l, output_path, output_align1, output_align2, original_seq1, original_seq2)
-
