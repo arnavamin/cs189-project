@@ -52,6 +52,7 @@ seq2: sequence 2
 
 Output:
 path: The optimal global alignment path (max values at each step)
+indices: The matrix indices of the optimal path (for tkinter application)
 aligned_seq1: The aligned version of sequence 1 (adjusting for gaps)
 aligned_seq2: The aligned version of sequence 2 (adjusting for gaps)
 
@@ -59,6 +60,7 @@ aligned_seq2: The aligned version of sequence 2 (adjusting for gaps)
 def get_alignment(g, seq1, seq2):
     # Trace back to get optimal path
     path = []
+    indices = []
     scores = [0, 0, 0] # Initialize an array to hold the computed scores while backtracking
 
     # Initialize the aligned sequences with the last nucleotide in the alignment
@@ -82,6 +84,7 @@ def get_alignment(g, seq1, seq2):
             if (i != 0 and j != 0):
                 aligned_seq1.append(seq1[j])
                 aligned_seq2.append(seq2[i])
+                indices.append((i,j))
             i -= 1
             j -= 1
         else:
@@ -92,24 +95,29 @@ def get_alignment(g, seq1, seq2):
                 if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
                     aligned_seq1.append(seq1[i])
                     aligned_seq2.append('-')
+                    indices.append((i,j))
                     j -= 1
                 else:
                     aligned_seq1.append(seq1[j])
                     aligned_seq2.append('-')
+                    indices.append((i,j))
                     j -= 1
             elif np.argmax(scores) == 1:
                 if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
                     aligned_seq1.append('-')
                     aligned_seq2.append(seq2[j])
+                    indices.append((i,j))
                     i -= 1
                 else:
                     aligned_seq1.append('-')
                     aligned_seq2.append(seq2[i])
+                    indices.append((i,j))
                     i -= 1
             elif np.argmax(scores) == 2:
                 if (i != 1 and j != 1):
                     aligned_seq1.append(seq1[j])
                     aligned_seq2.append(seq2[i])
+                    indices.append((i,j))
                 i -= 1
                 j -= 1    
 
@@ -117,7 +125,8 @@ def get_alignment(g, seq1, seq2):
     path.reverse()
     aligned_seq1.reverse()
     aligned_seq2.reverse()
-    return path, aligned_seq1, aligned_seq2
+    indices.reverse()
+    return path, indices, aligned_seq1, aligned_seq2
 
 '''
 Outputs the global alignment and its details.
@@ -213,7 +222,7 @@ if __name__ == '__main__':
     g = compute_alignment(seq1, seq2, match, mismatch, gap)
 
     # Get the global alignment from the matrix
-    path, aligned_seq1, aligned_seq2 = get_alignment(g, seq1, seq2)
+    path, indices, aligned_seq1, aligned_seq2 = get_alignment(g, seq1, seq2)
 
     # Print the global alignment and its relevant information
     print_alignment(g, path, seq1, seq2, aligned_seq1, aligned_seq2)
