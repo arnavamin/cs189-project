@@ -3,9 +3,11 @@ from tkinter import ttk
 import numpy as np
 
 import global_alignment as ga
+import local_alignment as la
 
 # Function to display the alignment score matrix
-def show_alignment():
+def show_alignment(alignment_type):
+    indices = []
     seq1 = ga.format_sequence(entry_seq1.get())
     seq2 = ga.format_sequence(entry_seq2.get())
     match = int(entry_match.get())
@@ -18,9 +20,14 @@ def show_alignment():
     # match = 2
     # mismatch = -1
     # gap = -2
-
-    matrix = ga.compute_alignment(seq1, seq2, match, mismatch, gap)
-    path, indices, aligned_seq1, aligned_seq2 = ga.get_alignment(matrix, seq1, seq2)
+    if alignment_type == 'global':
+        matrix = ga.compute_alignment(seq1, seq2, match, mismatch, gap)
+        path, indices, aligned_seq1, aligned_seq2 = ga.get_alignment(matrix, seq1, seq2)
+    elif alignment_type == 'local':
+        matrix = la.compute_alignment(seq1, seq2, match, mismatch, gap)
+        path, aligned_seq1, aligned_seq2 = la.get_alignment(matrix, seq1, seq2)
+    print(aligned_seq1)
+    print(aligned_seq2)
 
     # Clear previous content in result_frame
     for widget in result_frame.winfo_children():
@@ -54,20 +61,29 @@ def show_alignment():
 
     
 
-    ttk.Label(root, text="Aligned Sequences:").grid(row=7, column=0, padx=10, pady=10, sticky='e')
+    ttk.Label(root, text="Aligned Sequences:").grid(row=8, column=0, padx=10, pady=10, sticky='e')
     aligned_frame = ttk.Frame(root)
-    aligned_frame.grid(row=8, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
+    aligned_frame.grid(row=9, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
     # Clear previous content in aligned_frame
     for widget in aligned_frame.winfo_children():
         widget.destroy()
-    
-    for j, char in enumerate(aligned_seq1):
-        label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
-        label.grid(row=0, column=j+1, sticky='nsew')
-    
-    for j, char in enumerate(aligned_seq2):
-        label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
-        label.grid(row=1, column=j+1, sticky='nsew')
+    if (type(aligned_seq1[0]) == list):
+        for lst in aligned_seq1:
+            for j, char in enumerate(lst):
+                label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+                label.grid(row=0, column=j+1, sticky='nsew')
+        for lst in aligned_seq2:
+            for j, char in enumerate(lst):
+                label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+                label.grid(row=1, column=j+1, sticky='nsew')
+    else:
+        for j, char in enumerate(aligned_seq1):
+            label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+            label.grid(row=0, column=j+1, sticky='nsew')
+        
+        for j, char in enumerate(aligned_seq2):
+            label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
+            label.grid(row=1, column=j+1, sticky='nsew')
         
 
 # Create the main window
@@ -102,10 +118,11 @@ entry_gap = ttk.Entry(root)
 entry_gap.grid(row=4, column=1, padx=5, pady=5, sticky='ew')
 
 # Button to trigger the alignment calculation
-ttk.Button(root, text="Align", command=show_alignment).grid(row=5, column=0, columnspan=2, pady=10)
+ttk.Button(root, text="Global Align", command=lambda: show_alignment('global')).grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+ttk.Button(root, text="Local Align", command=lambda: show_alignment('local')).grid(row=6, column=0, columnspan=2, padx=10, pady=10)
 
 # Frame to display the result matrix
 result_frame = ttk.Frame(root)
-result_frame.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
+result_frame.grid(row=7, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
 
 root.mainloop()
