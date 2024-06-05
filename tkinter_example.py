@@ -7,6 +7,8 @@ import local_alignment as la
 
 # Function to display the alignment score matrix
 def show_alignment(alignment_type):
+    original_seq1 = entry_seq1.get()
+    original_seq2 = entry_seq2.get()
     seq1 = ga.format_sequence(entry_seq1.get())
     seq2 = ga.format_sequence(entry_seq2.get())
     match = int(entry_match.get())
@@ -19,12 +21,15 @@ def show_alignment(alignment_type):
     # match = 2
     # mismatch = -1
     # gap = -2
+    print(entry_seq1.get())
+    print(entry_seq2.get())
     if alignment_type == 'global':
         matrix = ga.compute_alignment(seq1, seq2, match, mismatch, gap)
         path, indices, aligned_seq1, aligned_seq2 = ga.get_alignment(matrix, seq1, seq2)
     elif alignment_type == 'local':
-        matrix = la.compute_alignment(seq1, seq2, match, mismatch, gap)
-        path, indices, aligned_seq1, aligned_seq2 = la.get_alignment(matrix, seq1, seq2)
+        matrix = la.compute_alignment(original_seq1, original_seq2, match, mismatch, gap)
+        path, indices, aligned_seq1, aligned_seq2 = la.get_alignment(matrix, original_seq1, original_seq2)
+        print(path)
     print(aligned_seq1)
     print(aligned_seq2)
 
