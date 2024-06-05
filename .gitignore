@@ -1,3 +1,8 @@
 *.cpython
 *.pyc
+<<<<<<< HEAD
 __pycache__/local_alignment.cpython-311.pyc
+=======
+__pycache__/local_alignment.cpython-311.pyc
+s
+>>>>>>> eaafe8f211572ab47189cfeb671f4d9d27a09272
