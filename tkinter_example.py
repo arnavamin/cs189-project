@@ -7,7 +7,6 @@ import local_alignment as la
 
 # Function to display the alignment score matrix
 def show_alignment(alignment_type):
-    indices = []
     seq1 = ga.format_sequence(entry_seq1.get())
     seq2 = ga.format_sequence(entry_seq2.get())
     match = int(entry_match.get())
@@ -25,7 +24,7 @@ def show_alignment(alignment_type):
         path, indices, aligned_seq1, aligned_seq2 = ga.get_alignment(matrix, seq1, seq2)
     elif alignment_type == 'local':
         matrix = la.compute_alignment(seq1, seq2, match, mismatch, gap)
-        path, aligned_seq1, aligned_seq2 = la.get_alignment(matrix, seq1, seq2)
+        path, indices, aligned_seq1, aligned_seq2 = la.get_alignment(matrix, seq1, seq2)
     print(aligned_seq1)
     print(aligned_seq2)
 
@@ -88,7 +87,7 @@ def show_alignment(alignment_type):
 
 # Create the main window
 root = tk.Tk()
-root.title("Global Alignment")
+root.title("Alignment App")
 
 # Configure the main window grid to expand
 root.grid_columnconfigure(0, weight=1)
