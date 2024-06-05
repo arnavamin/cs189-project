@@ -76,6 +76,7 @@ def get_alignment(l, original_seq1, original_seq2):
 
     index_positions = list(np.argwhere(l == np.max(l)))
 
+    indices = []
     output_path = []
     output_align1 = []
     output_align2 = []
@@ -103,6 +104,7 @@ def get_alignment(l, original_seq1, original_seq2):
             if (seq2[x] == seq1[y]):
                 path.append(scores[2])
                 if (x != 0 and y != 0):
+                    indices.append((x, y))
                     aligned_seq1.append(seq1[y])
                     aligned_seq2.append(seq2[x])
                 x -= 1
@@ -114,24 +116,29 @@ def get_alignment(l, original_seq1, original_seq2):
                     if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
                         aligned_seq1.append(seq1[x])
                         aligned_seq2.append('-')
+                        indices.append((x, y))
                         y -= 1
                     else:
                         aligned_seq1.append(seq1[x+1])
                         aligned_seq2.append('-')
+                        indices.append((x, y))
                         y -= 1
                 elif np.argmax(scores) == 1:
                     if (len(aligned_seq1) == 0 and len(aligned_seq2) == 0):
                         aligned_seq1.append('-')
                         aligned_seq2.append(seq2[y])
+                        indices.append((x, y))
                         x -= 1
                     else:
                         aligned_seq1.append('-')
                         aligned_seq2.append(seq2[y])
+                        indices.append((x, y))
                         x -= 1
                 elif np.argmax(scores) == 2:
                     if (x != 1 and y != 1):
                         aligned_seq1.append(seq1[y])
                         aligned_seq2.append(seq2[x])
+                        indices.append((x, y))
                     x -= 1
                     y -= 1   
 
@@ -143,8 +150,9 @@ def get_alignment(l, original_seq1, original_seq2):
         output_align1.append(aligned_seq1)
         aligned_seq2.reverse()
         output_align2.append(aligned_seq2)
+        indices.reverse()
 
-    return output_path, output_align1, output_align2
+    return output_path, indices, output_align1, output_align2
 
 def print_alignment(l, output_path, output_align1, output_align2, original_seq1, original_seq2):
     print()
@@ -198,6 +206,6 @@ if __name__ == '__main__':
 
     l = compute_alignment(original_seq1, original_seq2, match, mismatch, gap)
 
-    output_path, output_align1, output_align2 = get_alignment(l, original_seq1, original_seq2)
+    output_path, indices, output_align1, output_align2 = get_alignment(l, original_seq1, original_seq2)
 
     print_alignment(l, output_path, output_align1, output_align2, original_seq1, original_seq2)
