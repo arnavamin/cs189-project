@@ -1,2 +1,4 @@
 *.cpython
 *.pyc
+__pycache__/local_alignment.cpython-311.pyc
+s
