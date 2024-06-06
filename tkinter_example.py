@@ -72,14 +72,14 @@ def show_alignment(alignment_type):
     for widget in aligned_frame.winfo_children():
         widget.destroy()
     if (type(aligned_seq1[0]) == list):
-        for lst in aligned_seq1:
+        for count, lst in enumerate(aligned_seq1):
             for j, char in enumerate(lst):
                 label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
-                label.grid(row=0, column=j+1, sticky='nsew')
-        for lst in aligned_seq2:
+                label.grid(row=(count*2), column=j+1, sticky='nsew')
+        for count, lst in enumerate(aligned_seq2):
             for j, char in enumerate(lst):
                 label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
-                label.grid(row=1, column=j+1, sticky='nsew')
+                label.grid(row=(count*2)+1, column=j+1, sticky='nsew')
     else:
         for j, char in enumerate(aligned_seq1):
             label = ttk.Label(aligned_frame, text=char, borderwidth=1, relief="solid", width=5, anchor='center')
