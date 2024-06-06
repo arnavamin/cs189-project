@@ -10,7 +10,6 @@ def convert_str_to_list(original_seq1, original_seq2):
     return seq1, seq2
     
 def compute_alignment(original_seq1, original_seq2, match, mismatch, gap):
-    print('in here!')
     seq1, seq2 = convert_str_to_list(original_seq1, original_seq2)
 
     l = np.zeros((len(seq2), len(seq1)), dtype=int)
@@ -72,7 +71,6 @@ def print_matrix(l, original_seq1, original_seq2):
         print('\n--' + '+---' * (l.shape[0]) + '+')
 
 def get_alignment(l, original_seq1, original_seq2):
-    print('here too!')
     
     seq1, seq2 = convert_str_to_list(original_seq1, original_seq2)
 
