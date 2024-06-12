@@ -1,5 +1,6 @@
 import numpy as np
 
+#Converts the string to list for the code.
 def convert_str_to_list(original_seq1, original_seq2):
     seq1 = list(original_seq1)
     seq1.insert(0, "-")
@@ -8,7 +9,8 @@ def convert_str_to_list(original_seq1, original_seq2):
     seq2.insert(0, "-")
 
     return seq1, seq2
-    
+
+#The compute_alignment function takes in two nucleotide sequences and scores for matches, mismatches, and gaps to compute the optimal local alignment graph with the given parameters.
 def compute_alignment(original_seq1, original_seq2, match, mismatch, gap):
     seq1, seq2 = convert_str_to_list(original_seq1, original_seq2)
 
@@ -21,18 +23,20 @@ def compute_alignment(original_seq1, original_seq2, match, mismatch, gap):
             elif (j == 0):
                 l[i][j] = i * 0 
             else:
-                row_score = l[i][j-1] + gap
-                col_score = l[i-1][j] + gap
+                row_score = l[i][j-1] + gap# Compute the score if there is a gap on the row sequence
+                col_score = l[i-1][j] + gap# Compute the score if there is a gap on the column sequence
 
-                if row_score < 0:
+                if row_score < 0: #If row score is below 0, set row score as 0. 
                     row_score = 0
                 else:
                     pass
 
-                if col_score < 0:
+                if col_score < 0: #If column score is below 0, set column score as 0. 
                     col_score = 0
                 else:
                     pass
+
+                # Compute the score if there is a match/mismatch
 
                 diagonal_score = l[i-1][j-1] 
 
@@ -49,6 +53,7 @@ def compute_alignment(original_seq1, original_seq2, match, mismatch, gap):
                 l[i][j] = max(row_score, col_score, diagonal_score)
     return l
 
+#Prints the matrix on the backend. 
 def print_matrix(l, original_seq1, original_seq2):
 
     seq1, seq2 = convert_str_to_list(original_seq1, original_seq2)
@@ -69,6 +74,8 @@ def print_matrix(l, original_seq1, original_seq2):
                 print('| {} '.format(n), end='')
         print('|', end='')
         print('\n--' + '+---' * (l.shape[0]) + '+')
+        
+#The get_alignment function takes the local alignment matrix and sequences and then traces back the optimal path taken by the algorithm. It also links the optimal path to the alignment sequences.
 
 def get_alignment(l, original_seq1, original_seq2):
     
@@ -153,6 +160,8 @@ def get_alignment(l, original_seq1, original_seq2):
         indices.reverse()
 
     return output_path, indices, output_align1, output_align2
+
+#print_alignment outputs the local alignment and its details. 
 
 def print_alignment(l, output_path, output_align1, output_align2, original_seq1, original_seq2):
     print()
