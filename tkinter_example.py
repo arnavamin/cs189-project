@@ -11,9 +11,22 @@ def show_alignment(alignment_type):
     original_seq2 = entry_seq2.get()
     seq1 = ga.format_sequence(entry_seq1.get())
     seq2 = ga.format_sequence(entry_seq2.get())
-    match = int(entry_match.get())
-    mismatch = int(entry_mismatch.get())
-    gap = int(entry_gap.get())
+    
+    aligned_frame = ttk.Frame(root)
+    aligned_frame.grid(row=9, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
+
+    try:
+        match = int(entry_match.get())
+        mismatch = int(entry_mismatch.get())
+        gap = int(entry_gap.get())
+    except ValueError:
+        # Clear previous content in result_frame
+        for widget in result_frame.winfo_children():
+            widget.destroy()
+        for widget in aligned_frame.winfo_children():
+            widget.destroy()
+        ttk.Label(root, text="Invalid score inputted. Please try again.").grid(row=8, column=0, padx=10, pady=10, sticky='e')
+        return
     
     # For testing purposes
     # seq1 = ga.format_sequence('GATTACATATACG')
@@ -30,6 +43,8 @@ def show_alignment(alignment_type):
 
     # Clear previous content in result_frame
     for widget in result_frame.winfo_children():
+        widget.destroy()
+    for widget in aligned_frame.winfo_children():
         widget.destroy()
 
     # Create labels for column headers (seq1 characters)
@@ -61,8 +76,6 @@ def show_alignment(alignment_type):
     
 
     ttk.Label(root, text="Aligned Sequences:").grid(row=8, column=0, padx=10, pady=10, sticky='e')
-    aligned_frame = ttk.Frame(root)
-    aligned_frame.grid(row=9, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
     # Clear previous content in aligned_frame
     for widget in aligned_frame.winfo_children():
         widget.destroy()
